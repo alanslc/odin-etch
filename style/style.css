@@ -1,3 +1,7 @@
+* {
+   box-sizing: border-box;
+}
+
 body {
    margin: 0;
    padding:8px;
@@ -22,4 +26,13 @@ body {
 
    padding: 8px 16px;
    margin: 16px;
+}
+
+.grid {
+   background-color: blue;
+   margin:auto;
+}
+
+.box {
+   aspect-ratio: 1/1;
 }
