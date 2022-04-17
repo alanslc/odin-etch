@@ -1,0 +1,25 @@
+body {
+   margin: 0;
+   padding:8px;
+}
+
+.header {
+   display:flex;
+   justify-content: center;
+}
+
+.reset {
+   font-family: Georgia, 'Times New Roman', Times, serif;
+   font-size: 20px;
+
+   background-color: rgb(36, 180, 23);
+   color: white;
+
+   border-style: solid;
+   border-color: rgb(141, 212, 134);
+   border-radius: 8px;
+   border-width: 3px;
+
+   padding: 8px 16px;
+   margin: 16px;
+}
