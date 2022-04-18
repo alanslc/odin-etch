@@ -1,4 +1,4 @@
-const INIT_NUM_GRID = 2;
+const INIT_NUM_GRID = 16;
 const MAX_NUM_GRID = 100;
 const MIN_NUM_GRID = 1;
 const BOX_GAP = 2;
@@ -13,15 +13,23 @@ let curWinW, curWinH, curGridW, curGridH;
 let isPainting = false;
 let timeHandle;
 
+let freshed = 0;
+let minFresh = Infinity;
+let maxFresh = -Infinity;
+
 prepare();
 redraw(INIT_NUM_GRID);
 
 function prepare() {
    const button = document.querySelector('.reset');
+   const grid = document.querySelector('.grid');
+   grid.addEventListener('click', () => isPainting = !isPainting);
    button.addEventListener('click', reestGrid);
    window.addEventListener('resize', reportWindowResize);
 
+   
    timeHandle = setInterval(refresh, REFRESH_INTERVAL);
+   setInterval(() => { console.log(`freshed: ${freshed}  min:${minFresh}  max:${maxFresh}`) }, 3000);
 }
 
 function redraw(numGrid) {
@@ -55,6 +63,7 @@ function inputGridSize() {
 }
 
 function refresh() {
+   const t1 = Date.now();
    boxesMap.forEach(((info, box) => {
       const now = Date.now();
 
@@ -63,9 +72,16 @@ function refresh() {
          if (info.transparency < 0.001)
             info.transparency = 0;
          box.style.backgroundColor = `rgba(${BOX_BGC}, ${info.transparency.toFixed(2)})`
-         // console.log('fadeing:', `rgba(${BOX_BGC}, ${info.transparency.toFixed(2)})`);
       }
    }));
+   const t2 = Date.now();
+   const t = t2 - t1;
+   if (t > maxFresh)
+      maxFresh = t;
+   if (t < minFresh)
+      minFresh = t;
+   freshed++;
+
 }
 
 function mouseEneterBox(e) {
@@ -93,9 +109,9 @@ function addBoxesToGrid(n) {
       for (let w = 0; w < g; w++) {
          const div = document.createElement('div');
          div.classList.add('box');
-         div.addEventListener('mousedown', () => isPainting = true);
+         // div.addEventListener('mousedown', () => isPainting = true);
          div.addEventListener('mousemove', mouseEneterBox)
-         div.addEventListener('mouseup', () => isPainting = false);
+         // div.addEventListener('mouseup', () => isPainting = false);
          grid.appendChild(div);
 
          const boxInfo = {
