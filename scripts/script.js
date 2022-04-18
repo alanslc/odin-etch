@@ -2,8 +2,8 @@ const INIT_NUM_GRID = 16;
 const MAX_NUM_GRID = 100;
 const MIN_NUM_GRID = 1;
 const BOX_GAP = 2;
-const PROMPT_MSG = `How many grids per side do you want? (${MIN_NUM_GRID} .. ${MAX_NUM_GRID})`
-
+const PROMPT_MSG = `How many grids per side do you want? (${MIN_NUM_GRID} .. ${MAX_NUM_GRID})`;
+const BOX_BGC = '2, 182, 122';
 let curWinW, curWinH, curGridW, curGridH;
 
 prepare();
@@ -44,6 +44,11 @@ function inputGridSize() {
    return input == null ? null : size;
 }
 
+function mouseEneterBox(e) {
+   const box = e.target;
+   box.style.backgroundColor = `rgb(${BOX_BGC})`
+}
+
 function reportWindowResize(e) {
    fitGridAreaToWindow();
 }
@@ -59,6 +64,7 @@ function addBoxesToGrid(n) {
       for (let w = 0; w < g; w++) {
          const div = document.createElement('div');
          div.classList.add('box');
+         div.addEventListener('mouseenter', mouseEneterBox)
          grid.appendChild(div);
       }
    }
