@@ -4,11 +4,11 @@
 
 body {
    margin: 0;
-   padding:8px;
+   padding: 8px;
 }
 
 .header {
-   display:flex;
+   display: flex;
    justify-content: center;
 }
 
@@ -29,10 +29,19 @@ body {
 }
 
 .grid {
-   background-color: blue;
-   margin:auto;
+   display: grid;
+   grid-template-columns: repeat(16, 1fr);
+   grid-template-rows: repeat(16, 1fr);
+   background-color: rgb(159, 211, 200);
+   margin: 0 auto;
+   gap: 2px;
 }
 
 .box {
    aspect-ratio: 1/1;
+   margin: 0;
+   padding: 0;
+   border-color: green;
+   border-style: solid;
+   border-width: 1px;
 }
