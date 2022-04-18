@@ -1,10 +1,17 @@
-const INIT_NUM_GRID = 16;
+const INIT_NUM_GRID = 2;
 const MAX_NUM_GRID = 100;
 const MIN_NUM_GRID = 1;
 const BOX_GAP = 2;
 const PROMPT_MSG = `How many grids per side do you want? (${MIN_NUM_GRID} .. ${MAX_NUM_GRID})`;
 const BOX_BGC = '2, 182, 122';
+const REFRESH_INTERVAL = 100;
+const TIME_TO_START_FADE = 3000;
+const FADE_RATE = 0.01;
+
+let boxesMap = new Map();
 let curWinW, curWinH, curGridW, curGridH;
+let isPainting = false;
+let timeHandle;
 
 prepare();
 redraw(INIT_NUM_GRID);
@@ -13,6 +20,8 @@ function prepare() {
    const button = document.querySelector('.reset');
    button.addEventListener('click', reestGrid);
    window.addEventListener('resize', reportWindowResize);
+
+   timeHandle = setInterval(refresh, REFRESH_INTERVAL);
 }
 
 function redraw(numGrid) {
@@ -26,6 +35,7 @@ function removeAllBox() {
    const boxes = grid.querySelectorAll('.box');
    for (const box of boxes)
       grid.removeChild(box);
+   boxesMap.clear();
 }
 
 function reestGrid() {
@@ -44,9 +54,28 @@ function inputGridSize() {
    return input == null ? null : size;
 }
 
+function refresh() {
+   boxesMap.forEach(((info, box) => {
+      const now = Date.now();
+
+      if ((info.transparency > 0) && (now - info.timestamp > TIME_TO_START_FADE)) {
+         info.transparency -= FADE_RATE;
+         if (info.transparency < 0.001)
+            info.transparency = 0;
+         box.style.backgroundColor = `rgba(${BOX_BGC}, ${info.transparency.toFixed(2)})`
+         // console.log('fadeing:', `rgba(${BOX_BGC}, ${info.transparency.toFixed(2)})`);
+      }
+   }));
+}
+
 function mouseEneterBox(e) {
-   const box = e.target;
-   box.style.backgroundColor = `rgb(${BOX_BGC})`
+   if (isPainting) {
+      const box = e.target;
+      box.style.backgroundColor = `rgb(${BOX_BGC})`
+
+      const info = boxesMap.get(box);
+      info.transparency = 1;
+   }
 }
 
 function reportWindowResize(e) {
@@ -64,8 +93,16 @@ function addBoxesToGrid(n) {
       for (let w = 0; w < g; w++) {
          const div = document.createElement('div');
          div.classList.add('box');
-         div.addEventListener('mouseenter', mouseEneterBox)
+         div.addEventListener('mousedown', () => isPainting = true);
+         div.addEventListener('mousemove', mouseEneterBox)
+         div.addEventListener('mouseup', () => isPainting = false);
          grid.appendChild(div);
+
+         const boxInfo = {
+            timestamp: Date.now(),
+            transparency: 0
+         }
+         boxesMap.set(div, boxInfo);
       }
    }
 }
